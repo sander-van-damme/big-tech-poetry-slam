@@ -18,4 +18,7 @@ async function handleRequest(requestDetails) {
   return false;
 }
 
-chrome.webRequest.onCompleted.addListener(handleRequest, { urls: ["<all_urls>"] });
+// Webnavigation workaround required because of bug in webrequest worker (cf. https://bugs.chromium.org/p/chromium/issues/detail?id=1024211).
+chrome.webNavigation.onBeforeNavigate.addListener(() => {
+  chrome.webRequest.onCompleted.addListener(handleRequest, { urls: ["*://*/*"] });
+});
